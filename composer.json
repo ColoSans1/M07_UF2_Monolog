@@ -1,0 +1,15 @@
+{
+    "name": "arnaucolominassans/m07_uf2_monolog",
+    "autoload": {
+        "psr-4": {
+            "Arnaucolominassans\\M07Uf2Monolog\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "ColoSans1",
+            "email": "arnaucolominassans2004@gmail.com"
+        }
+    ],
+    "require": {}
+}
