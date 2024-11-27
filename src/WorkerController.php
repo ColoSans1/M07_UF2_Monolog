@@ -2,7 +2,7 @@
 $steps = 0;
 
 // Load dependencies
-require './vendor/autoload.php'; 
+require './vendor/autoload.php';
 ++$steps;
 
 use Monolog\Level;
@@ -26,7 +26,7 @@ $db = [
 
 try {
     // Connect to the database
-    $mysqli = new mysqli($db["host"], $db["user"], $db["pwd"], $db["db_name"]); // 4 db
+    $mysqli = new mysqli($db["host"], $db["root"], $db[""], $db["worker"]); // 4 db
     
     // Log connection success
     $log->info("Connection successfully to the database: " . $db["db_name"]);
