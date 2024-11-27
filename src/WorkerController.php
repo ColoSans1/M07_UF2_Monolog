@@ -1,7 +1,7 @@
 <?php
 $steps = 0;
 
-// Load dependencies
+// Cargar dependencias
 require './vendor/autoload.php';
 ++$steps;
 
@@ -9,48 +9,60 @@ use Monolog\Level;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
-// Create log
+// Crear log
 $log = new Logger("LogWorkerDB");
-// Define logs location
+// Definir ubicación de los logs
 $log->pushHandler(new StreamHandler("../logs/WorkerDB.log", Level::Error)); 
 ++$steps;
 
-// Read from miConf.ini (assuming the file exists and contains db credentials)
-$config = parse_ini_file('../miConf.ini');
+// Leer desde el archivo miConf.ini (asumiendo que el archivo existe y contiene las credenciales de la base de datos)
+$config = parse_ini_file(__DIR__ . "/../conf/miConf.ini", true);
+
+if ($config === false) {
+    $log->error("No se pudo cargar el archivo de configuración miConf.ini.");
+    die("Error al cargar el archivo de configuración.");
+}
+
+// Obtener valores de configuración
 $db = [
-    "host" => $config['host'],
-    "user" => $config['user'],
-    "pwd" => $config['pwd'],
-    "db_name" => $config['db_name']
+    "host" => $config['params_db_sql']['host'],
+    "port" => $config['params_db_sql']['port'],
+    "user" => $config['params_db_sql']['user'],
+    "pwd" => $config['params_db_sql']['pwd'],
+    "db_name" => $config['params_db_sql']['db_name']
 ];
 
 try {
-    // Connect to the database
-    $mysqli = new mysqli($db["host"], $db["root"], $db[""], $db["worker"]); // 4 db
+    // Conectar a la base de datos
+    $mysqli = new mysqli($db["host"], $db["user"], $db["pwd"], $db["db_name"], $db["port"]);
+
+    if ($mysqli->connect_error) {
+        throw new mysqli_sql_exception("Error de conexión: " . $mysqli->connect_error);
+    }
     
-    // Log connection success
-    $log->info("Connection successfully to the database: " . $db["db_name"]);
+    // Log de éxito en la conexión
+    $log->info("Conexión exitosa a la base de datos: " . $db["db_name"]);
     ++$steps;
 
-    // Create operation
+    // Crear sentencia de operación (inserción de datos)
     $sql_sentence = "INSERT INTO worker(dni, name, surname, salary, phone) 
                      VALUES('71111111D', 'Juan', 'González', 20000, '93500202')";
 
     try {
         $result = $mysqli->query($sql_sentence);
-        
-        // Log successful insertion
-        $log->info("Record inserted successfully: DNI '71111111D', Name 'Juan González'");
+
+        // Log de inserción exitosa
+        $log->info("Registro insertado exitosamente: DNI '71111111D', Nombre 'Juan González'");
         ++$steps;
     } catch (mysqli_sql_exception $e) {
-        // Log error message for failed insert
-        $log->error("Error inserting a record: " . $e->getMessage());
+        // Log de error en la inserción
+        $log->error("Error al insertar un registro: " . $e->getMessage());
         ++$steps;
     }
 } catch (mysqli_sql_exception $e) {
-    // Log error message for failed connection
-    $log->error("Error connection db: " . $e->getMessage() . " - Host: " . $db["host"] . " - User: " . $db["user"]);
+    // Log de error en la conexión
+    $log->error("Error de conexión a la base de datos: " . $e->getMessage() . " - Host: " . $db["host"] . " - Usuario: " . $db["user"]);
     ++$steps;
 }
 
-echo "Steps executed correctly: " . $steps;
+echo "Pasos ejecutados correctamente: " . $steps;
