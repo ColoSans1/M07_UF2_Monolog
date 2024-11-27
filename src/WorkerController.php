@@ -33,12 +33,14 @@ $db = [
 ];
 
 try {
-    // Conectar a la base de datos
-    $mysqli = new mysqli($db["host"], $db["user"], $db["pwd"], $db["db_name"], $db["port"]);
+// Conectar a la base de datos
+$mysqli = new mysqli($db["host"], $db["user"], $db["pwd"], $db["db_name"], $db["port"]);
 
     if ($mysqli->connect_error) {
-        throw new mysqli_sql_exception("Error de conexión: " . $mysqli->connect_error);
-    }
+    $log->error("Connection failed: " . $mysqli->connect_error);
+    die("Connection failed: " . $mysqli->connect_error);  
+}
+
     
     // Log de éxito en la conexión
     $log->info("Conexión exitosa a la base de datos: " . $db["db_name"]);
