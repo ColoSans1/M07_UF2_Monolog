@@ -2,7 +2,7 @@
 $steps = 0;
 
 // Cargar dependencias
-require './vendor/autoload.php';
+require '../vendor/autoload.php';
 ++$steps;
 
 use Monolog\Level;
@@ -12,7 +12,7 @@ use Monolog\Handler\StreamHandler;
 // Crear log
 $log = new Logger("LogWorkerDB");
 // Definir ubicación de los logs
-$log->pushHandler(new StreamHandler("../logs/WorkerDB.log", Level::Error)); 
+$log->pushHandler(new StreamHandler("../logs/WorkerController.php", Level::Error)); 
 ++$steps;
 
 // Leer desde el archivo miConf.ini (asumiendo que el archivo existe y contiene las credenciales de la base de datos)
